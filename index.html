@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+  <title>Fiche Client — Showroom</title>
+  <meta name="description" content="Application de gestion des fiches visiteurs du showroom. 100% hors-ligne." />
+  <meta name="theme-color" content="#2563eb" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Fiche Client" />
+
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icons/icon-192.png" type="image/png" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ╔══════════════════════════════════════════════════════════════╗
+     ║  TOAST CONTAINER                                             ║
+     ╚══════════════════════════════════════════════════════════════╝ -->
+<div id="toast-container" aria-live="polite" aria-atomic="false"></div>
+
+<!-- ╔══════════════════════════════════════════════════════════════╗
+     ║  SCREEN 1 — HOME (Profile Selector)                          ║
+     ╚══════════════════════════════════════════════════════════════╝ -->
+<section id="screen-home" class="screen" role="main" aria-label="Accueil">
+
+  <div class="home-wrapper">
+    <!-- Logo -->
+    <div class="home-logo" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+        <circle cx="9" cy="7" r="4"/>
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+      </svg>
+    </div>
+
+    <h1 class="home-title">Fiche Client</h1>
+    <p class="home-subtitle">Gestion des visiteurs du showroom · FIA</p>
+
+    <div class="home-cards">
+      <!-- Espace Saisie -->
+      <button class="profile-card card-saisie" id="btn-saisie" type="button"
+              aria-label="Accéder à l'espace saisie visiteur">
+        <div class="profile-card-icon" aria-hidden="true">📋</div>
+        <div class="profile-card-title">Espace Saisie</div>
+        <div class="profile-card-desc">Enregistrer un nouveau visiteur</div>
+      </button>
+
+      <!-- Espace Admin -->
+      <button class="profile-card card-admin" id="btn-admin-login" type="button"
+              aria-label="Accéder à l'espace administration">
+        <div class="profile-card-icon" aria-hidden="true">🔐</div>
+        <div class="profile-card-title">Espace Admin</div>
+        <div class="profile-card-desc">Gérer l'équipe et consulter l'historique</div>
+      </button>
+    </div>
+  </div>
+
+</section>
+
+
+<!-- ╔══════════════════════════════════════════════════════════════╗
+     ║  SCREEN 2 — SAISIE VISITEUR                                  ║
+     ╚══════════════════════════════════════════════════════════════╝ -->
+<section id="screen-saisie" class="screen hidden" role="main" aria-label="Saisie visiteur">
+
+  <!-- Header -->
+  <header class="page-header">
+    <button class="btn-back btn-back-home" type="button" aria-label="Retour à l'accueil">← Accueil</button>
+    <div class="page-header-logo" aria-hidden="true">📋</div>
+    <div>
+      <div class="page-header-title">Espace Saisie <span class="page-header-sub">— Nouveau visiteur</span></div>
+    </div>
+  </header>
+
+  <!-- Form -->
+  <main class="page-content">
+    <div class="form-card">
+      <div class="form-card-header">
+        <h2 class="form-card-title">
+          <span aria-hidden="true">👤</span> Enregistrement visiteur
+        </h2>
+        <p class="form-card-subtitle">Remplissez les informations du visiteur, puis validez.</p>
+      </div>
+
+      <form id="visitor-form" novalidate>
+        <div class="form-grid">
+
+          <div class="form-group">
+            <label for="v-prenom">Prénom <span class="required" aria-hidden="true">*</span></label>
+            <input type="text" id="v-prenom" name="prenom"
+                   placeholder="Jean" autocomplete="off"
+                   required aria-required="true" />
+          </div>
+
+          <div class="form-group">
+            <label for="v-nom">Nom <span class="required" aria-hidden="true">*</span></label>
+            <input type="text" id="v-nom" name="nom"
+                   placeholder="Dupont" autocomplete="off"
+                   required aria-required="true" />
+          </div>
+
+          <div class="form-group">
+            <label for="v-entreprise">Entreprise</label>
+            <input type="text" id="v-entreprise" name="entreprise"
+                   placeholder="Nom de la société" autocomplete="off" />
+          </div>
+
+          <div class="form-group">
+            <label for="v-telephone">Téléphone</label>
+            <input type="tel" id="v-telephone" name="telephone"
+                   placeholder="+33 6 00 00 00 00" autocomplete="off" />
+          </div>
+
+          <div class="form-group full-width">
+            <label for="v-email">Adresse e-mail</label>
+            <input type="email" id="v-email" name="email"
+                   placeholder="jean.dupont@exemple.fr" autocomplete="off" />
+          </div>
+
+          <div class="form-group full-width">
+            <label for="membre-select">Membre de l'équipe <span class="required" aria-hidden="true">*</span></label>
+            <select id="membre-select" name="membre" required aria-required="true">
+              <option value="">-- Sélectionner un membre --</option>
+            </select>
+          </div>
+
+          <div class="form-group full-width">
+            <label for="v-note">Note / Description de la visite</label>
+            <textarea id="v-note" name="note" rows="4"
+                      placeholder="Détails sur la visite, intérêts du client, produits discutés…"></textarea>
+          </div>
+
+        </div>
+
+        <div class="form-actions">
+          <button type="reset" class="btn btn-outline" id="btn-reset-form">
+            Réinitialiser
+          </button>
+          <button type="submit" class="btn btn-success btn-lg" id="btn-submit-visitor">
+            <span aria-hidden="true">✓</span> Valider l'enregistrement
+          </button>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <!-- Success Overlay -->
+  <div id="success-overlay" class="hidden" role="dialog" aria-modal="true" aria-label="Enregistrement réussi">
+    <div class="success-card">
+      <div class="success-icon" aria-hidden="true">✓</div>
+      <h2 class="success-title">Visiteur enregistré !</h2>
+      <p class="success-subtitle">
+        <strong id="success-name"></strong> a bien été enregistré(e) dans la base de données.
+      </p>
+      <button class="btn btn-success btn-full" id="success-close">Fermer</button>
+    </div>
+  </div>
+
+</section>
+
+
+<!-- ╔══════════════════════════════════════════════════════════════╗
+     ║  SCREEN 3 — ADMIN LOGIN                                      ║
+     ╚══════════════════════════════════════════════════════════════╝ -->
+<section id="screen-admin-login" class="screen hidden" role="main" aria-label="Connexion administrateur">
+
+  <div class="login-card">
+    <div class="login-header">
+      <div class="login-icon" aria-hidden="true">🔐</div>
+      <h1 class="login-title">Espace Administration</h1>
+      <p class="login-subtitle">Entrez le mot de passe pour accéder au panneau admin</p>
+    </div>
+
+    <form id="admin-login-form" novalidate>
+      <div class="form-group" style="margin-bottom: 16px;">
+        <label for="admin-password">Mot de passe</label>
+        <div class="password-wrapper">
+          <input type="password" id="admin-password" name="password"
+                 placeholder="••••••••" autocomplete="current-password"
+                 required aria-required="true" />
+          <button type="button" class="toggle-pwd-btn" id="toggle-password-visibility"
+                  aria-label="Afficher/Masquer le mot de passe">👁</button>
+        </div>
+      </div>
+
+      <div id="admin-login-error" class="error-msg hidden" role="alert">
+        ⚠️ Mot de passe incorrect. Réessayez.
+      </div>
+
+      <div style="display:flex; gap:10px; margin-top:20px;">
+        <button type="button" class="btn btn-outline btn-back-home" style="flex:1">
+          ← Retour
+        </button>
+        <button type="submit" class="btn btn-primary" style="flex:2">
+          Se connecter
+        </button>
+      </div>
+    </form>
+  </div>
+
+</section>
+
+
+<!-- ╔══════════════════════════════════════════════════════════════╗
+     ║  SCREEN 4 — ADMIN PANEL                                      ║
+     ╚══════════════════════════════════════════════════════════════╝ -->
+<section id="screen-admin" class="screen hidden" role="main" aria-label="Panneau administrateur">
+
+  <!-- Admin Header -->
+  <header class="admin-header">
+    <div class="admin-header-logo" aria-hidden="true">🛡</div>
+    <div class="admin-header-info">
+      <div class="admin-header-title">Panneau Administrateur</div>
+      <div class="admin-header-sub">Fiche Client — Showroom FIA</div>
+    </div>
+    <button class="btn btn-outline btn-sm" id="btn-admin-logout"
+            style="color:#94a3b8; border-color:#334155;"
+            aria-label="Se déconnecter">
+      ← Quitter
+    </button>
+  </header>
+
+  <!-- Tabs Navigation -->
+  <nav class="tabs-bar" role="tablist" aria-label="Sections administrateur">
+    <button class="tab-btn active" data-tab="team" role="tab"
+            aria-selected="true" aria-controls="tab-team" id="tabBtn-team">
+      <span aria-hidden="true">👥</span> Équipe
+    </button>
+    <button class="tab-btn" data-tab="history" role="tab"
+            aria-selected="false" aria-controls="tab-history" id="tabBtn-history">
+      <span aria-hidden="true">📊</span> Historique
+    </button>
+    <button class="tab-btn" data-tab="backup" role="tab"
+            aria-selected="false" aria-controls="tab-backup" id="tabBtn-backup">
+      <span aria-hidden="true">💾</span> Sauvegarde
+    </button>
+    <button class="tab-btn" data-tab="settings" role="tab"
+            aria-selected="false" aria-controls="tab-settings" id="tabBtn-settings">
+      <span aria-hidden="true">⚙️</span> Paramètres
+    </button>
+  </nav>
+
+
+  <!-- ── TAB 1: TEAM ──────────────────────────────────────────── -->
+  <div class="tab-content" data-tab="team" id="tab-team" role="tabpanel" aria-labelledby="tabBtn-team">
+
+    <!-- Add Member Form -->
+    <div class="add-member-card">
+      <div class="section-header" style="margin-bottom:16px;">
+        <div>
+          <div class="section-title">Ajouter un membre</div>
+          <div class="section-subtitle">Renseignez les informations du nouveau membre de l'équipe</div>
+        </div>
+      </div>
+
+      <form id="team-form" novalidate>
+        <div class="add-member-form">
+          <div class="form-group">
+            <label for="m-prenom">Prénom</label>
+            <input type="text" id="m-prenom" placeholder="Marie" autocomplete="off" required />
+          </div>
+          <div class="form-group">
+            <label for="m-nom">Nom</label>
+            <input type="text" id="m-nom" placeholder="Martin" autocomplete="off" required />
+          </div>
+          <div class="form-group">
+            <label for="m-poste">Poste</label>
+            <input type="text" id="m-poste" placeholder="Conseillère vente" autocomplete="off" required />
+          </div>
+          <button type="submit" class="btn btn-primary" style="height:44px;" id="btn-add-member">
+            <span aria-hidden="true">+</span> Ajouter
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Team List -->
+    <div class="section-header">
+      <div>
+        <div class="section-title">Membres de l'équipe</div>
+        <div class="section-subtitle">Ces membres apparaîtront dans le menu déroulant lors de l'enregistrement des visiteurs</div>
+      </div>
+    </div>
+    <div id="team-list" role="list" aria-label="Liste des membres de l'équipe">
+      <p class="empty-state">Chargement…</p>
+    </div>
+
+  </div>
+
+
+  <!-- ── TAB 2: HISTORY ──────────────────────────────────────── -->
+  <div class="tab-content hidden" data-tab="history" id="tab-history" role="tabpanel" aria-labelledby="tabBtn-history">
+
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-chip">
+        <span aria-hidden="true">👥</span>
+        Total : <strong id="stat-total">0</strong> visiteur(s)
+      </div>
+      <div class="stat-chip">
+        <span aria-hidden="true">📅</span>
+        Aujourd'hui : <strong id="stat-today">0</strong>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="history-controls">
+      <div class="search-box">
+        <span class="search-icon" aria-hidden="true">🔍</span>
+        <input type="search" id="search-input"
+               placeholder="Rechercher par nom, email, entreprise…"
+               aria-label="Rechercher des visiteurs" />
+      </div>
+      <button class="btn btn-danger btn-sm" id="btn-delete-selected" disabled
+              aria-label="Supprimer les visiteurs sélectionnés">
+        🗑 Supprimer la sélection
+      </button>
+    </div>
+
+    <!-- Empty state -->
+    <div id="history-empty">
+      <div class="empty-icon" aria-hidden="true">📭</div>
+      <div class="empty-title">Aucun visiteur enregistré</div>
+      <div class="empty-desc">Les fiches visiteurs apparaîtront ici dès qu'un visiteur sera enregistré.</div>
+    </div>
+
+    <!-- Table -->
+    <div id="visitors-table-wrapper" class="hidden" role="region" aria-label="Tableau des visiteurs">
+      <table aria-label="Liste des visiteurs">
+        <thead>
+          <tr>
+            <th>
+              <input type="checkbox" id="select-all-visitors"
+                     aria-label="Sélectionner tous les visiteurs" />
+            </th>
+            <th>Date</th>
+            <th>Visiteur</th>
+            <th>Entreprise</th>
+            <th>E-mail</th>
+            <th>Téléphone</th>
+            <th>Membre équipe</th>
+            <th>Note</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="visitors-tbody">
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+
+  <!-- ── TAB 3: BACKUP ────────────────────────────────────────── -->
+  <div class="tab-content hidden" data-tab="backup" id="tab-backup" role="tabpanel" aria-labelledby="tabBtn-backup">
+
+    <div class="section-header">
+      <div>
+        <div class="section-title">Sauvegarde des données</div>
+        <div class="section-subtitle">Exportez vos données pour les copier sur une clé USB ou les archiver</div>
+      </div>
+    </div>
+
+    <div class="backup-count-badge" style="margin-bottom:24px;">
+      <span aria-hidden="true">📊</span>
+      <span id="backup-count">0</span> fiche(s) visiteur enregistrée(s)
+    </div>
+
+    <div class="backup-grid">
+
+      <!-- CSV Export -->
+      <div class="backup-card">
+        <div class="backup-card-icon" style="background:#dcfce7;" aria-hidden="true">📊</div>
+        <div>
+          <div class="backup-card-title">Export CSV / Excel</div>
+          <div class="backup-card-desc">
+            Génère un fichier <strong>.csv</strong> compatible avec Microsoft Excel, LibreOffice Calc, et Google Sheets.
+            Encodé en UTF-8 avec BOM pour un affichage correct des caractères.
+          </div>
+        </div>
+        <button class="btn btn-success btn-lg" id="btn-export-csv" aria-label="Exporter les données au format CSV">
+          <span aria-hidden="true">⬇</span> Télécharger le fichier CSV
+        </button>
+      </div>
+
+      <!-- JSON Export -->
+      <div class="backup-card">
+        <div class="backup-card-icon" style="background:#dbeafe;" aria-hidden="true">🗂</div>
+        <div>
+          <div class="backup-card-title">Export JSON</div>
+          <div class="backup-card-desc">
+            Génère un fichier <strong>.json</strong> structuré avec toutes les données brutes.
+            Utile pour un import dans un autre système ou une sauvegarde complète.
+          </div>
+        </div>
+        <button class="btn btn-primary btn-lg" id="btn-export-json" aria-label="Exporter les données au format JSON">
+          <span aria-hidden="true">⬇</span> Télécharger le fichier JSON
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Danger Zone -->
+    <div class="danger-zone" role="region" aria-label="Zone de danger">
+      <div class="danger-zone-title">
+        <span aria-hidden="true">⚠️</span> Zone de danger
+      </div>
+      <p class="danger-zone-desc">
+        Cette action supprime définitivement tous les visiteurs enregistrés. Elle est irréversible.
+        Effectuez un export avant de procéder.
+      </p>
+      <button class="btn btn-danger" id="btn-clear-data"
+              aria-label="Supprimer toutes les données visiteurs">
+        🗑 Supprimer toutes les données visiteurs
+      </button>
+    </div>
+
+  </div>
+
+
+  <!-- ── TAB 4: SETTINGS ──────────────────────────────────────── -->
+  <div class="tab-content hidden" data-tab="settings" id="tab-settings" role="tabpanel" aria-labelledby="tabBtn-settings">
+
+    <div class="section-header">
+      <div>
+        <div class="section-title">Paramètres</div>
+        <div class="section-subtitle">Modifier le mot de passe administrateur</div>
+      </div>
+    </div>
+
+    <div class="pwd-card">
+      <h3 style="font-size:1rem; font-weight:700; color:var(--text-1); margin-bottom:20px; display:flex; align-items:center; gap:8px;">
+        <span aria-hidden="true">🔑</span> Modifier le mot de passe
+      </h3>
+
+      <form id="change-pwd-form" novalidate>
+        <div style="display:flex; flex-direction:column; gap:16px;">
+
+          <div class="form-group">
+            <label for="pwd-current">Mot de passe actuel</label>
+            <input type="password" id="pwd-current" placeholder="••••••••"
+                   autocomplete="current-password" required />
+          </div>
+
+          <div class="form-group">
+            <label for="pwd-new">Nouveau mot de passe</label>
+            <input type="password" id="pwd-new" placeholder="••••••••"
+                   autocomplete="new-password" required
+                   minlength="6" />
+          </div>
+
+          <div class="form-group">
+            <label for="pwd-confirm">Confirmer le nouveau mot de passe</label>
+            <input type="password" id="pwd-confirm" placeholder="••••••••"
+                   autocomplete="new-password" required />
+          </div>
+
+          <button type="submit" class="btn btn-primary" id="btn-change-pwd">
+            <span aria-hidden="true">💾</span> Enregistrer le nouveau mot de passe
+          </button>
+
+        </div>
+      </form>
+
+      <hr class="divider" />
+
+      <div style="background:var(--bg-input); border-radius:var(--radius); padding:14px; font-size:0.83rem; color:var(--text-2);">
+        <strong style="color:var(--text-1);">Mot de passe par défaut :</strong> Admin123<br>
+        Modifiez-le dès la première utilisation pour sécuriser votre espace admin.
+      </div>
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- ╔══════════════════════════════════════════════════════════════╗
+     ║  PWA Install Banner (optionnel)                              ║
+     ╚══════════════════════════════════════════════════════════════╝ -->
+<div id="install-banner" class="hidden" role="complementary" aria-label="Installer l'application">
+  <div class="install-text">
+    <strong>Installer l'application</strong>
+    Accédez à Fiche Client directement depuis votre écran d'accueil.
+  </div>
+  <div style="display:flex; flex-direction:column; gap:6px;">
+    <button class="btn btn-primary btn-sm" id="btn-install">Installer</button>
+    <button class="btn btn-ghost btn-sm" id="btn-dismiss-install"
+            style="color:#94a3b8; font-size:0.75rem;">Ignorer</button>
+  </div>
+</div>
+
+
+<script src="db.js"></script>
+<script src="app.js"></script>
+
+<script>
+  // PWA Install prompt handling
+  let deferredPrompt = null;
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    const banner = document.getElementById('install-banner');
+    banner.classList.remove('hidden');
+
+    document.getElementById('btn-install').addEventListener('click', () => {
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then(() => {
+        deferredPrompt = null;
+        banner.classList.add('hidden');
+      });
+    });
+
+    document.getElementById('btn-dismiss-install').addEventListener('click', () => {
+      banner.classList.add('hidden');
+    });
+  });
+</script>
+
+</body>
+</html>
